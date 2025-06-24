@@ -66,3 +66,52 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.auth-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.auth-container h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.auth-container form > div {
+  margin-bottom: 1rem;
+}
+.auth-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.auth-container input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.auth-container button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #282c34;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.2s;
+}
+.auth-container button:hover {
+  background: #61dafb;
+  color: #282c34;
+}
+.error {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+  text-align: center;
+}
