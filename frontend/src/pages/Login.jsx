@@ -17,6 +17,7 @@ const Login = () => {
     setLoading(false);
     if (data.token) {
       navigate('/');
+    
     } else {
       setError(data.message || 'Login failed');
     }
@@ -51,6 +52,7 @@ const Login = () => {
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
+      
     </div>
   );
 };
