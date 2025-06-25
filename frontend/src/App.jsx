@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Study from './pages/Study';
 import NotFound from './pages/NotFound';
 import Navbar from './components/Navbar';
+import DeckDetails from './features/decks/DeckDetails';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/study" element={<Study />} />
+            <Route path="/decks/:deckId" element={<DeckDetails />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
