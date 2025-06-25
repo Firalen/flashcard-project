@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../services/authService';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (!email || !password) {
-      setError('Please enter both email and password.');
-      return;
+    setLoading(true);
+    const data = await login({ email, password });
+    setLoading(false);
+    if (data.token) {
+      navigate('/');
+    } else {
+      setError(data.message || 'Login failed');
     }
-    // TODO: Add API call here
-    alert(`Logging in with\nEmail: ${email}\nPassword: ${password}`);
   };
 
   return (
@@ -41,7 +47,9 @@ const Login = () => {
           />
         </div>
         {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
-        <button type="submit" className="w-full py-2 bg-gray-900 text-white font-semibold rounded hover:bg-blue-500 transition-colors">Login</button>
+        <button type="submit" className="w-full py-2 bg-gray-900 text-white font-semibold rounded hover:bg-blue-500 transition-colors" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
     </div>
   );

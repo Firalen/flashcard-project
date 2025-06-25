@@ -1,51 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-
-const mockDecks = [
-  { id: 1, name: 'Math', description: 'Algebra, Geometry, Calculus' },
-  { id: 2, name: 'Biology', description: 'Cells, Genetics, Evolution' },
-];
-
-const initialFlashcards = [
-  { id: 1, front: 'What is 2+2?', back: '4', tags: ['easy'], difficulty: 'Easy' },
-  { id: 2, front: 'What is the powerhouse of the cell?', back: 'Mitochondria', tags: ['biology'], difficulty: 'Medium' },
-];
+import { getFlashcards, createFlashcard, updateFlashcard, deleteFlashcard } from '../../services/flashcardService';
+import { getDecks } from '../../services/deckService';
 
 const DeckDetails = () => {
   const { deckId } = useParams();
   const navigate = useNavigate();
-  const deck = mockDecks.find(d => d.id === Number(deckId));
-  const [flashcards, setFlashcards] = useState(initialFlashcards);
+  const [deck, setDeck] = useState(null);
+  const [flashcards, setFlashcards] = useState([]);
   const [front, setFront] = useState('');
   const [back, setBack] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
   const [editModal, setEditModal] = useState({ open: false, card: null });
   const [editFront, setEditFront] = useState('');
   const [editBack, setEditBack] = useState('');
+  const [editLoading, setEditLoading] = useState(false);
 
-  if (!deck) {
-    return (
-      <div className="text-center text-red-600">Deck not found. <button className="underline" onClick={() => navigate(-1)}>Go back</button></div>
-    );
-  }
+  useEffect(() => {
+    async function fetchDeckAndFlashcards() {
+      setLoading(true);
+      const decks = await getDecks();
+      const foundDeck = Array.isArray(decks) ? decks.find(d => d._id === deckId) : null;
+      setDeck(foundDeck);
+      const cards = await getFlashcards(deckId);
+      setFlashcards(Array.isArray(cards) ? cards : []);
+      setLoading(false);
+    }
+    fetchDeckAndFlashcards();
+  }, [deckId]);
 
-  const handleAddFlashcard = (e) => {
+  const handleAddFlashcard = async (e) => {
     e.preventDefault();
     setError('');
     if (!front.trim() || !back.trim()) {
       setError('Both front and back are required.');
       return;
     }
-    setFlashcards([
-      ...flashcards,
-      { id: Date.now(), front, back, tags: [], difficulty: 'Easy' },
-    ]);
-    setFront('');
-    setBack('');
+    setCreating(true);
+    const newCard = await createFlashcard(deckId, { front, back });
+    if (newCard && newCard._id) {
+      setFlashcards([...flashcards, newCard]);
+      setFront('');
+      setBack('');
+    } else {
+      setError(newCard.message || 'Failed to create flashcard');
+    }
+    setCreating(false);
   };
 
-  const handleDelete = (id) => {
-    setFlashcards(flashcards.filter(card => card.id !== id));
+  const handleDelete = async (id) => {
+    await deleteFlashcard(deckId, id);
+    setFlashcards(flashcards.filter(card => card._id !== id));
   };
 
   const openEditModal = (card) => {
@@ -60,13 +67,27 @@ const DeckDetails = () => {
     setEditBack('');
   };
 
-  const handleEditSubmit = (e) => {
+  const handleEditSubmit = async (e) => {
     e.preventDefault();
-    setFlashcards(flashcards.map(card =>
-      card.id === editModal.card.id ? { ...card, front: editFront, back: editBack } : card
-    ));
-    closeEditModal();
+    setEditLoading(true);
+    const updated = await updateFlashcard(deckId, editModal.card._id, { front: editFront, back: editBack });
+    setEditLoading(false);
+    if (updated && updated._id) {
+      setFlashcards(flashcards.map(card => card._id === updated._id ? updated : card));
+      closeEditModal();
+    } else {
+      setError(updated.message || 'Failed to update flashcard');
+    }
   };
+
+  if (loading) {
+    return <div className="text-center text-gray-400 py-8">Loading deck...</div>;
+  }
+  if (!deck) {
+    return (
+      <div className="text-center text-red-600">Deck not found. <button className="underline" onClick={() => navigate(-1)}>Go back</button></div>
+    );
+  }
 
   return (
     <section className="w-full max-w-2xl mx-auto bg-white rounded-lg shadow p-8 flex flex-col items-center">
@@ -87,12 +108,14 @@ const DeckDetails = () => {
           onChange={e => setBack(e.target.value)}
           className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition-colors">Add Flashcard</button>
+        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition-colors" disabled={creating}>
+          {creating ? 'Adding...' : 'Add Flashcard'}
+        </button>
       </form>
       {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
       <ul className="space-y-4 w-full">
         {flashcards.map(card => (
-          <li key={card.id} className="p-4 bg-blue-50 rounded shadow flex flex-col md:flex-row md:items-center md:justify-between">
+          <li key={card._id} className="p-4 bg-blue-50 rounded shadow flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <div className="font-semibold text-blue-800">Q: {card.front}</div>
               <div className="text-gray-700">A: {card.back}</div>
@@ -104,7 +127,7 @@ const DeckDetails = () => {
               >Edit</button>
               <button
                 className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
-                onClick={() => handleDelete(card.id)}
+                onClick={() => handleDelete(card._id)}
               >Delete</button>
             </div>
           </li>
@@ -138,7 +161,9 @@ const DeckDetails = () => {
                 placeholder="Back (answer)"
                 required
               />
-              <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition-colors">Save Changes</button>
+              <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition-colors" disabled={editLoading}>
+                {editLoading ? 'Saving...' : 'Save Changes'}
+              </button>
             </form>
           </div>
         </div>

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { signup } from '../services/authService';
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -6,8 +8,10 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     if (!username || !email || !password || !confirmPassword) {
@@ -18,8 +22,14 @@ const Signup = () => {
       setError('Passwords do not match.');
       return;
     }
-    // TODO: Add API call here
-    alert(`Signing up with\nUsername: ${username}\nEmail: ${email}`);
+    setLoading(true);
+    const data = await signup({ username, email, password });
+    setLoading(false);
+    if (data.message === 'User created successfully.') {
+      navigate('/login');
+    } else {
+      setError(data.message || 'Signup failed');
+    }
   };
 
   return (
@@ -67,7 +77,9 @@ const Signup = () => {
           />
         </div>
         {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
-        <button type="submit" className="w-full py-2 bg-gray-900 text-white font-semibold rounded hover:bg-blue-500 transition-colors">Sign Up</button>
+        <button type="submit" className="w-full py-2 bg-gray-900 text-white font-semibold rounded hover:bg-blue-500 transition-colors" disabled={loading}>
+          {loading ? 'Signing up...' : 'Sign Up'}
+        </button>
       </form>
     </div>
   );
