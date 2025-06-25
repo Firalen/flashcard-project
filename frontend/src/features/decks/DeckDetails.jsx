@@ -90,43 +90,43 @@ const DeckDetails = () => {
   }
 
   return (
-    <section className="w-full max-w-2xl mx-auto bg-white rounded-lg shadow p-8 flex flex-col items-center">
-      <h2 className="text-2xl font-bold text-blue-700 mb-1">{deck.name}</h2>
-      <p className="text-gray-600 mb-6 text-center">{deck.description}</p>
-      <form onSubmit={handleAddFlashcard} className="flex flex-col md:flex-row gap-2 mb-6 w-full">
+    <section className="w-full max-w-2xl mx-auto bg-white/60 backdrop-blur-md rounded-2xl shadow-2xl p-10 flex flex-col items-center border border-blue-100 mt-6 md:mt-12">
+      <h2 className="text-3xl font-extrabold text-blue-700 mb-1 tracking-tight drop-shadow">{deck.name}</h2>
+      <p className="text-gray-600 mb-8 text-lg text-center">{deck.description}</p>
+      <form onSubmit={handleAddFlashcard} className="flex flex-col md:flex-row gap-3 mb-8 w-full">
         <input
           type="text"
           placeholder="Front (question)"
           value={front}
           onChange={e => setFront(e.target.value)}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="flex-1 px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/80 shadow"
         />
         <input
           type="text"
           placeholder="Back (answer)"
           value={back}
           onChange={e => setBack(e.target.value)}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="flex-1 px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/80 shadow"
         />
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition-colors" disabled={creating}>
+        <button type="submit" className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg font-semibold shadow hover:scale-105 hover:shadow-lg transition-all" disabled={creating}>
           {creating ? 'Adding...' : 'Add Flashcard'}
         </button>
       </form>
       {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
-      <ul className="space-y-4 w-full">
+      <ul className="space-y-5 w-full">
         {flashcards.map(card => (
-          <li key={card._id} className="p-4 bg-blue-50 rounded shadow flex flex-col md:flex-row md:items-center md:justify-between">
+          <li key={card._id} className="p-6 bg-white/70 backdrop-blur rounded-xl shadow-lg flex flex-col md:flex-row md:items-center md:justify-between border border-blue-100 hover:scale-[1.01] hover:shadow-2xl transition-all">
             <div>
-              <div className="font-semibold text-blue-800">Q: {card.front}</div>
+              <div className="font-semibold text-blue-800 text-lg">Q: {card.front}</div>
               <div className="text-gray-700">A: {card.back}</div>
             </div>
-            <div className="flex gap-2 mt-2 md:mt-0">
+            <div className="flex gap-2 mt-4 md:mt-0">
               <button
-                className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 transition-colors"
+                className="px-4 py-2 bg-gradient-to-r from-yellow-200 to-yellow-400 text-yellow-900 rounded-lg font-semibold shadow hover:scale-105 hover:shadow-lg transition-all"
                 onClick={() => openEditModal(card)}
               >Edit</button>
               <button
-                className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                className="px-4 py-2 bg-gradient-to-r from-red-200 to-red-400 text-red-900 rounded-lg font-semibold shadow hover:scale-105 hover:shadow-lg transition-all"
                 onClick={() => handleDelete(card._id)}
               >Delete</button>
             </div>
@@ -137,19 +137,19 @@ const DeckDetails = () => {
       {/* Edit Modal */}
       {editModal.open && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative border border-blue-100">
             <button
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl"
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl"
               onClick={closeEditModal}
               aria-label="Close"
             >&times;</button>
-            <h3 className="text-lg font-bold mb-4 text-blue-700">Edit Flashcard</h3>
+            <h3 className="text-2xl font-bold mb-6 text-blue-700 tracking-tight drop-shadow">Edit Flashcard</h3>
             <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
               <input
                 type="text"
                 value={editFront}
                 onChange={e => setEditFront(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/80 shadow"
                 placeholder="Front (question)"
                 required
               />
@@ -157,11 +157,11 @@ const DeckDetails = () => {
                 type="text"
                 value={editBack}
                 onChange={e => setEditBack(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/80 shadow"
                 placeholder="Back (answer)"
                 required
               />
-              <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition-colors" disabled={editLoading}>
+              <button type="submit" className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg font-semibold shadow hover:scale-105 hover:shadow-lg transition-all" disabled={editLoading}>
                 {editLoading ? 'Saving...' : 'Save Changes'}
               </button>
             </form>
