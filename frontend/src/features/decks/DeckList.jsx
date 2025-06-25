@@ -40,6 +40,19 @@ const DeckList = () => {
     setCreating(false);
   };
 
+  const handleLoadSamples = async () => {
+    setLoading(true);
+    const token = localStorage.getItem('token');
+    await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000/api') + '/samples', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    // Refresh decks
+    const data = await getDecks();
+    setDecks(Array.isArray(data) ? data : []);
+    setLoading(false);
+  };
+
   return (
     <div className="w-full">
       <h2 className="text-2xl font-bold mb-6 text-blue-700 tracking-tight drop-shadow flex items-center gap-2">
@@ -68,7 +81,15 @@ const DeckList = () => {
       {loading ? (
         <div className="text-center text-gray-400 py-8">Loading decks...</div>
       ) : decks.length === 0 ? (
-        <div className="text-center text-gray-400 py-8">No decks found.</div>
+        <div className="text-center text-gray-400 py-8 flex flex-col items-center gap-4">
+          No decks found.
+          <button
+            className="px-6 py-2 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg font-semibold shadow hover:scale-105 hover:shadow-lg transition-all"
+            onClick={handleLoadSamples}
+          >
+            Load Sample Decks & Cards
+          </button>
+        </div>
       ) : (
         <ul className="space-y-5">
           {decks.map(deck => (
