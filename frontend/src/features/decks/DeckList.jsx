@@ -55,34 +55,35 @@ const DeckList = () => {
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold mb-6 text-blue-700 tracking-tight drop-shadow flex items-center gap-2">
-        <span>📚</span>Your Decks
+      <h2 className="text-3xl font-bold mb-8 text-blue-800 tracking-tight drop-shadow flex items-center gap-2">
+        <span role="img" aria-label="books">📚</span> Your Decks
       </h2>
-      <form onSubmit={handleAddDeck} className="flex flex-col md:flex-row gap-3 mb-8">
+      <form onSubmit={handleAddDeck} className="flex flex-col md:flex-row gap-4 mb-10 bg-white/60 p-5 rounded-xl shadow border border-blue-100">
         <input
           type="text"
           placeholder="Deck name"
           value={name}
           onChange={e => setName(e.target.value)}
-          className="flex-1 px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/80 shadow"
+          className="flex-1 px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/90 shadow-sm text-lg"
         />
         <input
           type="text"
           placeholder="Description (optional)"
           value={description}
           onChange={e => setDescription(e.target.value)}
-          className="flex-1 px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/80 shadow"
+          className="flex-1 px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/90 shadow-sm text-lg"
         />
-        <button type="submit" className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg font-semibold shadow hover:scale-105 hover:shadow-lg transition-all" disabled={creating}>
+        <button type="submit" className="px-7 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg font-bold shadow hover:scale-105 hover:shadow-xl transition-all text-lg" disabled={creating}>
           {creating ? 'Adding...' : 'Add Deck'}
         </button>
       </form>
-      {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
+      {error && <div className="text-red-600 mb-4 text-center font-semibold">{error}</div>}
       {loading ? (
-        <div className="text-center text-gray-400 py-8">Loading decks...</div>
+        <div className="text-center text-gray-400 py-10 text-lg">Loading decks...</div>
       ) : decks.length === 0 ? (
-        <div className="text-center text-gray-400 py-8 flex flex-col items-center gap-4">
-          No decks found.
+        <div className="text-center text-gray-400 py-10 flex flex-col items-center gap-4">
+          <span className="text-2xl">🗂️</span>
+          <span>No decks found.</span>
           <button
             className="px-6 py-2 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg font-semibold shadow hover:scale-105 hover:shadow-lg transition-all"
             onClick={handleLoadSamples}
@@ -91,18 +92,18 @@ const DeckList = () => {
           </button>
         </div>
       ) : (
-        <ul className="space-y-5">
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-7">
           {decks.map(deck => (
-            <li key={deck._id} className="p-6 bg-white/70 backdrop-blur rounded-xl shadow-lg flex flex-col md:flex-row md:items-center md:justify-between border border-blue-100 hover:scale-[1.01] hover:shadow-2xl transition-all">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">📖</span>
+            <li key={deck._id} className="p-7 bg-white/80 backdrop-blur rounded-2xl shadow-xl flex flex-col gap-3 border border-blue-100 hover:scale-[1.02] hover:shadow-2xl transition-all cursor-pointer group">
+              <div className="flex items-center gap-4">
+                <span className="text-3xl group-hover:scale-110 transition-transform">📖</span>
                 <div>
-                  <div className="font-bold text-xl text-blue-800">{deck.name}</div>
-                  <div className="text-gray-600 text-sm">{deck.description}</div>
+                  <div className="font-bold text-2xl text-blue-900 group-hover:text-blue-600 transition-colors">{deck.name}</div>
+                  <div className="text-gray-600 text-base mt-1">{deck.description}</div>
                 </div>
               </div>
               <button
-                className="mt-4 md:mt-0 px-5 py-2 bg-gradient-to-r from-blue-200 to-blue-400 text-blue-900 rounded-lg font-semibold shadow hover:scale-105 hover:shadow-lg transition-all"
+                className="self-end mt-2 px-6 py-2 bg-gradient-to-r from-blue-200 to-blue-400 text-blue-900 rounded-lg font-semibold shadow hover:scale-105 hover:shadow-lg transition-all"
                 onClick={() => navigate(`/decks/${deck._id}`)}
               >
                 Study Deck
