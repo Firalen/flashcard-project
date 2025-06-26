@@ -9,7 +9,7 @@ const Dashboard = () => (
 
     <section className="relative z-10 w-full max-w-3xl mx-auto bg-white/70 backdrop-blur-md rounded-3xl shadow-2xl p-10 flex flex-col items-center border border-blue-100 mt-6 md:mt-14">
       <h1 className="text-5xl font-extrabold text-blue-700 mb-3 tracking-tight drop-shadow-lg">Welcome to Flashcards!</h1>
-      <p className="text-gray-300 mb-10 text-xl text-center max-w-2xl">Master your knowledge with beautiful, organized flashcards. Create, study, and track your progress—all in one place.</p>
+      <p className="text-gray-600 mb-10 text-xl text-center max-w-2xl">Master your knowledge with beautiful, organized flashcards. Create, study, and track your progress—all in one place.</p>
       <div className="w-full mt-2">
         <DeckList />
       </div>
